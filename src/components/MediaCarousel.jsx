@@ -55,7 +55,7 @@ export const MediaCarousel = () => {
             <video
               controls
               autoPlay
-              className="h-120 w-full rounded-lg shadow-md "
+              className="h-110 w-full rounded-lg shadow-md p-10"
             >
               <source src={item.src} type="video/mp4" />
             </video>
@@ -63,7 +63,7 @@ export const MediaCarousel = () => {
             <img
               src={item.src}
               alt={item.title}
-              className="rounded-lg shadow-md h-120 w-100"
+              className="rounded-lg shadow-md h-110 w-100 p-10"
             />
           )}
         </SwiperSlide>

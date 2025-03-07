@@ -6,7 +6,7 @@ function App() {
   return (
     <>
       <Navbar />
-      <section className="max-w-screen mx-auto min-h-screen py-6 bg-[#F8F2E9]">
+      <section className="max-w-screen mx-auto  py-6 bg-[#F8F2E9]">
         <main className="pt-24 px-6 flex gap-8 md:gap-16 leading-8  sm:px-10 md:px-16 font-sans m-30 ">
           <img
             src="src/assets/selfie.jpg"
@@ -31,10 +31,12 @@ function App() {
             </p>
           </div>
         </main>
-        <MediaCarousel />
+        <div className="py-10">
+          <MediaCarousel />
+        </div>
       </section>
 
-      <footer className="text-center p-6 text-[#B47B84] font-sans shadow-md bg-[#F8F2E9] ">
+      <footer className="text-center p-6 text-[#B47B84] font-sans shadow-md bg-[#F8F2E9]">
         2025 Lydia's kök made with ♥️
       </footer>
     </>
