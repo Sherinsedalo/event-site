@@ -23,7 +23,7 @@ const Navbar = () => {
           ></img>
 
           <NavLink
-            to="/"
+            to="/event"
             className="text-[#D8A7B1] text-xl sm:text-2xl md:text-3xl font-bold tracking-wide transition-all hover:text-[#B47B84]"
           >
             Lydia's Kök

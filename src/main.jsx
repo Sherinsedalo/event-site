@@ -3,9 +3,12 @@ import { createRoot } from "react-dom/client";
 import "./index.css";
 import App from "./App.jsx";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
+import { BookingForm } from "./pages/Booking";
 
 const router = createBrowserRouter([
-  { path: "/event", element: <App /> }
+  { path: "/event", element: <App /> },
+  { path: "/book", element: <BookingForm /> },
+
 ]);
 
 createRoot(document.getElementById("root")).render(
