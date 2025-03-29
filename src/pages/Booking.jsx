@@ -1,3 +1,5 @@
+import { db } from "../firebase";
+import { collection, addDoc } from "firebase/firestore";
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import validator from "validator";
@@ -9,7 +11,10 @@ export function BookingForm() {
   const [emailError, setEmailError] = useState("");
   const [phoneNumber, setPhoneNumber] = useState("");
   const [phoneError, setPhoneError] = useState("");
+  const [allergies, setAllergies] = useState("no");
+  const [allergyDetails, setAllergyDetails] = useState("");
   const [submitted, setSubmitted] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const validateEmail = (email) => {
     setEmail(email);
@@ -43,13 +48,40 @@ export function BookingForm() {
       firstName &&
       lastName &&
       validator.isEmail(email) &&
-      validator.isMobilePhone(phoneNumber, "any")
+      validator.isMobilePhone(phoneNumber, "any") &&
+      (allergies === "no" || (allergies === "yes" && allergyDetails))
     );
   };
 
-  const handleSubmit = (e) => {
+  const handleAllergyChange = (e) => {
+    setAllergies(e.target.value);
+  };
+
+  const handleAllergyDetailsChange = (e) => {
+    setAllergyDetails(e.target.value);
+  };
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    setSubmitted(true);
+    setIsSubmitting(true);
+    if (allergyDetails === "yes" && !allergyDetails) {
+      alert("Please provide allergy information");
+      return;
+    }
+    try {
+      await addDoc(collection(db, "bookings"), {
+        firstName,
+        lastName,
+        email,
+        phoneNumber,
+        timestamp: new Date(),
+      });
+      setSubmitted(true);
+    } catch (error) {
+      console.error("error saving bookings", error);
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -58,7 +90,7 @@ export function BookingForm() {
         {submitted ? (
           <div className="text-center">
             <h2 className="text-2xl font-semibold">
-              Thank you for your submission!🎉
+              Thank you for your registration!🎉
             </h2>
             <p className="mt-2 text-lg">
               We will email your with more details about the next event soon.
@@ -74,7 +106,7 @@ export function BookingForm() {
           <form onSubmit={handleSubmit} className="space-y-4">
             <fieldset>
               <h2 className="text-2xl font-semibold text-center">
-                Book your spot for the next event!🎟️
+                Book your spot for the next event! 🎟️
               </h2>
               <div>
                 <label className="block font-medium">
@@ -128,11 +160,65 @@ export function BookingForm() {
                 ></input>
                 {phoneError}
               </div>
+
+              <div className="space-y-2">
+                <label className="block font-medium">
+                  Do you have any allergies?
+                </label>
+
+                <div className="flex space-x-6">
+                  <div className="flex item-center">
+                    <input
+                      type="radio"
+                      id="allergies-yes"
+                      name="allergies"
+                      value="yes"
+                      checked={allergies === "yes"}
+                      onChange={handleAllergyChange}
+                      className=" appearance-none h-4 w-4 border-2 rounded-full border-gray-300 focus:ring-[#D8A7B1] focus:ring-2 checked:bg-[#D8A7B1] checked:border-[#D8A7B1] transition-colors"
+                    />
+                    <label htmlFor="allergies-yes" className="ml-2">
+                      yes{" "}
+                    </label>
+                  </div>
+                </div>
+
+                <div className="flex space-x-4">
+                  <div className="flex item-center">
+                    <input
+                      type="radio"
+                      id="allergies-no"
+                      name="allergies"
+                      value="no"
+                      checked={allergies === "no"}
+                      onChange={handleAllergyChange}
+                      className="appearance-none h-4 w-4 border-2 rounded-full border-gray-300 focus:ring-[#D8A7B1] focus:ring-2 checked:bg-[#D8A7B1] checked:border-[#D8A7B1] transition-colors"
+                    />
+                    <label htmlFor="allergies-no" className="ml-2">
+                      no
+                    </label>
+                  </div>
+                </div>
+              </div>
+
+              {allergies === "yes" && (
+                <div>
+                  <label className="block font-medium">
+                    Please specify your allergies:
+                  </label>
+                  <textarea
+                    value={allergyDetails}
+                    onChange={handleAllergyDetailsChange}
+                    required={allergies === "yes"}
+                    className="w-full p-2 border rounded-lg shadow-sm focus:ring-[#D8A7B1]"
+                  />
+                </div>
+              )}
             </fieldset>
 
             <button
               type="submit"
-              disabled={!getIsFormValid()}
+              disabled={!getIsFormValid() || isSubmitting}
               className="w-full bg-[#D8A7B1] text-white py-2 rounded-lg shadow-md hover:bg-[#B47B84] disabled:bg-gray-300"
             >
               Book My Seat
